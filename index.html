@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+  </head>
+  <body>
+    <div id="viewer"></div>
+    <div style="position: fixed; top: 10px; left: 10px">
+      <img src="static/map/map-1f.png" alt="" style="width: 300px" />
+      <div class="radar" id="point">
+        <div>
+          <div class="point"></div>
+          <svg width="50" height="50">
+            <path
+              id="path-svg"
+              stroke="rgb(252,89,56)"
+              stroke-width="0"
+              stroke-opacity="0.3"
+              fill="rgb(252,89,56)"
+              fill-opacity="0.5"
+              d="M 25,25 L 47.70241331376651,30.635797944615703 A 24,24 0 0 1 6.438568097854169,40.30457774330427 Z"
+              style="pointer-events: none; cursor: pointer; transform: scale(1, 1)"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
