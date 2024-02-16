@@ -140,22 +140,22 @@
     pako "^2.0.4"
     resize-observer-polyfill "^1.5.1"
 
-"@photo-sphere-viewer/core@^5.7.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@photo-sphere-viewer/core/-/core-5.7.0.tgz#2831ffdf792bdb2613fbff5c6d9b03acd4f6df6a"
-  integrity sha512-9IIvs4P8LWr/lTYQLEuhdGvkoK6dGCRLiVD54QybxIG7dt5dudC8Jq/GIQQb8G/QcbjmdW49ezA9LPxHTNYIgg==
+"@photo-sphere-viewer/core@^5.7.1":
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/@photo-sphere-viewer/core/-/core-5.7.1.tgz#3333b11ea397757d15325419f5e88e2f9e351caf"
+  integrity sha512-2wwErCpRiCee8mv9k5YAr4itMrAh2DL9dHriaOysS84xRJcmEZBMZXfhTuTFEdBvEq0o8Iv/gKheQvCrbLyv5w==
   dependencies:
     three "^0.161.0"
 
-"@photo-sphere-viewer/equirectangular-tiles-adapter@^5.7.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@photo-sphere-viewer/equirectangular-tiles-adapter/-/equirectangular-tiles-adapter-5.7.0.tgz#860e8e8d9bb25416a7a2dee573a196ed3756b0e6"
-  integrity sha512-cn009o11dcHeC+RmICM4GfvNK/nYqkMDz0lqzIzZTeEL0rhPSDLF9ozBrYAzQWRFOl21iddxNrkOJdS9cVIRWw==
+"@photo-sphere-viewer/equirectangular-tiles-adapter@^5.7.1":
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/@photo-sphere-viewer/equirectangular-tiles-adapter/-/equirectangular-tiles-adapter-5.7.1.tgz#7e625b3e0a07a436766327fc280f08cdf04b6443"
+  integrity sha512-gqASyVXC6W3/3sX4O3SrNNcK+cdtxlG5zP1umZ2K+GyiMeu3zApyJcgaL3bmEV5wow4IlYwinoyrqBWM3gQohA==
 
-"@photo-sphere-viewer/markers-plugin@^5.7.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@photo-sphere-viewer/markers-plugin/-/markers-plugin-5.7.0.tgz#97598a323ffce04a2635727fc163938c1589a312"
-  integrity sha512-5t1dteigvJQ+OP7swnWk4guU2MtYFrbapGKuWGEviXFY5dyqRcIAuRVCXsN7JGqDm3POyhlR+ofVX6YN/+Jvaw==
+"@photo-sphere-viewer/markers-plugin@^5.7.1":
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/@photo-sphere-viewer/markers-plugin/-/markers-plugin-5.7.1.tgz#265698ec2f65d23cbd56aa3c5883678b7a7c1f05"
+  integrity sha512-YWClibF4RWDKrVY7loJ9E/QBi1uWIPPv72cVtM4gIYbLdVDeNtc7vbNdUgsbFBesqWIhKM/9l2aYKZ3a7fYoIw==
 
 "@rollup/rollup-android-arm-eabi@4.9.6":
   version "4.9.6"

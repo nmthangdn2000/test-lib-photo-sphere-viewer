@@ -1,12 +1,13 @@
-import './style.css';
 import '@lottiefiles/lottie-player';
 import { Viewer } from '@photo-sphere-viewer/core';
 import { EquirectangularTilesAdapter } from '@photo-sphere-viewer/equirectangular-tiles-adapter';
-import { WebGLRenderer } from 'three';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+import { Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
+import './style.css';
 
 import '@photo-sphere-viewer/core/index.css';
 import '@photo-sphere-viewer/markers-plugin/index.css';
+import { CSS3DObject, CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { changePano, markersPluginOptions } from './marker';
 import { delay } from './util';
 
@@ -57,6 +58,7 @@ export const transitionPanorama = async (panorama: string, cb: () => void, isFir
   }
 
   const render = (viewer.renderer as any).renderer as WebGLRenderer;
+  viewer.needsUpdate();
 
   viewer.addEventListener(
     'render',
@@ -64,6 +66,9 @@ export const transitionPanorama = async (panorama: string, cb: () => void, isFir
       render.domElement.toBlob(
         (blob) => {
           if (!blob) return;
+
+          console.log('blob', blob);
+
           const url = URL.createObjectURL(blob);
           const imgElement = document.createElement('img');
           imgElement.id = 'panorama-image-transition';
@@ -114,12 +119,87 @@ const setPanorama = async (panorama: string) => {
   );
 };
 
-viewer.addEventListener('click', ({ data }) => {
+const videoElement = document.getElementById('video')! as HTMLVideoElement;
+
+const scene = new Scene();
+const renderer = new CSS3DRenderer();
+renderer.setSize(viewer.getSize().width, viewer.getSize().height);
+document.body.appendChild(renderer.domElement);
+
+const videoObject = new CSS3DObject(videoElement);
+// videoObject.position.set(5000, 0, 2000);
+videoObject.position.setFromSphericalCoords(5000, 1.5707963267948966, 1.1902899496825317);
+videoObject.rotation.set(0, Math.PI / 4, 0);
+scene.add(videoObject);
+
+var position = videoObject.position;
+
+// Tính toán bán kính từ vị trí của đối tượng
+var radius = position.distanceTo(new Vector3(0, 0, 0));
+
+// Tính toán góc theta
+var theta = Math.atan2(position.x, position.z);
+
+// Tính toán góc phi
+var phi = Math.acos(position.y / radius);
+
+console.log('radius', radius, 'theta', theta, 'phi', phi);
+
+videoElement.onclick = () => {
+  console.log(videoElement.parentNode);
+  videoElement.classList.add('video');
+  videoElement.classList.add('active');
+  videoElement.parentNode!.classList.add('container-video');
+  videoElement.parentNode!.classList.add('active');
+};
+
+viewer.addEventListener('click', async ({ data }) => {
   console.log(`${data.rightclick ? 'right ' : ''}clicked at yaw: ${data.yaw} pitch: ${data.pitch}`);
   console.log({
     yaw: data.yaw,
     pitch: data.pitch,
   });
+
+  videoElement.classList.remove('active');
+  videoElement.parentNode!.classList.remove('active');
+  await delay(700);
+
+  videoElement.classList.remove('video');
+  videoElement.parentNode!.classList.remove('container-video');
+});
+
+const animate = () => {
+  if (videoElement.children[0]!.played.length === 0) {
+    videoElement.children[0]!.play();
+  }
+  requestAnimationFrame(animate);
+  renderer.render(scene, viewer.renderer.camera);
+};
+
+animate();
+
+viewer.addEventListener('size-updated', () => {
+  const markersPlugin = viewer.getPlugin<MarkersPlugin>(MarkersPlugin);
+  const currentPanoImage = markersPlugin.getCurrentMarker();
+  console.log(currentPanoImage);
+
+  console.log(`viewer size updated to ${viewer.getSize().width}x${viewer.getSize().height}`);
+  viewer.needsUpdate();
+  renderer.setSize(viewer.getSize().width, viewer.getSize().height);
+});
+
+const container = document.querySelector('.psv-container')! as HTMLElement;
+
+container.style.cursor = 'default';
+
+container.addEventListener('pointerdown', (e) => {
+  console.log('pointerdown');
+  document.body.style.cursor = 'move';
+});
+
+container.addEventListener('pointerup', (e) => {
+  document.body.style.cursor = 'default';
+  console.log('pointerup');
 });
 
 const render = async () => {

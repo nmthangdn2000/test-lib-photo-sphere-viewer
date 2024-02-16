@@ -18,23 +18,10 @@ const panoSources: {
         style: {
           cursor: 'pointer',
         },
-      },
-      {
-        id: 'marker4',
-        zoomLvl: 90,
-        // position: [
-        //   //
-        //   { yaw: 5.760146015692825, pitch: 0.1256264831917735 }, // top left
-        //   { yaw: 6.004635391504111, pitch: 0.13613007021962487 }, // top right
-        //   { yaw: 6.012209625085939, pitch: 0.023861581135376175 },
-        //   { yaw: 5.764060006123193, pitch: 0.0454367507634843 }, // bottom left
-        // ],
-        // videoLayer: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-        style: {
-          cursor: 'pointer',
+        tooltip: {
+          content: '基準階へ',
+          className: 'tooltip',
         },
-        position: { yaw: 0.45, pitch: 0.11 },
-        html: `<video id="video" autoplay loop playsinline src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"/>`,
       },
     ],
   },
@@ -64,7 +51,7 @@ const panoSources: {
         style: {
           cursor: 'pointer',
         },
-        html: `<video id="video" autoplay loop playsinline style="width: 100%; height: 100%;" src="static/video/video-receptionist.webm"/>`,
+        // html: `<video id="video" autoplay loop playsinline style="width: 100%; height: 100%;" src="static/video/video-receptionist.webm"/>`,
       },
     ],
   },
@@ -72,8 +59,6 @@ const panoSources: {
 
 export const changePano = async (panoImage: string) => {
   const markersPlugin = viewer.getPlugin<MarkersPlugin>(MarkersPlugin);
-
-  if (!markersPlugin) return;
 
   const currentPanoImage = markersPlugin.getCurrentMarker();
 

@@ -23,6 +23,19 @@ body {
 
 .arrow {
   width: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title-marker {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 8px;
+  position: absolute;
+  top: 100%;
+  color: white;
+  border-radius: 8px;
+  width: max-content;
 }
 
 .psv-navbar {
@@ -69,4 +82,24 @@ body {
   transform: scale(1);
   transition: all 0.7s ease-in-out;
   pointer-events: none;
+}
+
+.container-video {
+  /* transition: all 0.7s !important; */
+}
+
+.container-video > div {
+  max-width: auto !important;
+}
+
+.container-video.active {
+  transform: none !important;
+}
+.video {
+  /* transition: all 0.7s !important; */
+}
+.video.active {
+  transform: translate3d(-50%, -50%, 0) !important;
+  top: 50%;
+  left: 50%;
 }
