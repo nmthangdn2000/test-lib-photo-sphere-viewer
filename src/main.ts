@@ -1,14 +1,17 @@
+// @ts-nocheck
+
 import '@lottiefiles/lottie-player';
 import { Viewer } from '@photo-sphere-viewer/core';
 import { EquirectangularTilesAdapter } from '@photo-sphere-viewer/equirectangular-tiles-adapter';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
-import { Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
+import { Audio, AudioListener, AudioLoader, Scene, Vector3 } from 'three';
 import './style.css';
 
 import '@photo-sphere-viewer/core/index.css';
 import '@photo-sphere-viewer/markers-plugin/index.css';
 import { CSS3DObject, CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { changePano, markersPluginOptions } from './marker';
+import { renderMarkerVr } from './marker-vr';
 import { delay } from './util';
 
 const pathSvgElement = document.getElementById('path-svg')!;
@@ -17,7 +20,6 @@ export const viewer = new Viewer({
   container: 'viewer',
   adapter: EquirectangularTilesAdapter,
   plugins: [[MarkersPlugin, markersPluginOptions]],
-
   // fisheye: true,
 });
 
@@ -57,43 +59,69 @@ export const transitionPanorama = async (panorama: string, cb: () => void, isFir
     return;
   }
 
-  const render = (viewer.renderer as any).renderer as WebGLRenderer;
-  viewer.needsUpdate();
+  let isGotoMarkerDone = false;
 
-  viewer.addEventListener(
-    'render',
+  const markersPlugin = viewer.getPlugin<MarkersPlugin>(MarkersPlugin);
+  markersPlugin.addEventListener(
+    'goto-marker-done',
     () => {
-      render.domElement.toBlob(
-        (blob) => {
-          if (!blob) return;
-
-          console.log('blob', blob);
-
-          const url = URL.createObjectURL(blob);
-          const imgElement = document.createElement('img');
-          imgElement.id = 'panorama-image-transition';
-          imgElement.src = url;
-
-          document.body.appendChild(imgElement);
-
-          imgElement.onload = async () => {
-            await setPanorama(panorama);
-
-            if (cb) cb();
-
-            imgElement.style.opacity = '0';
-            imgElement.style.transform = 'scale(1.5)';
-
-            await delay(700);
-            imgElement.remove();
-          };
-        },
-        'image/jpeg',
-        0.5
-      );
+      isGotoMarkerDone = true;
     },
     { once: true }
   );
+
+  viewer.textureLoader
+    .preloadPanorama({
+      name: 'equirectangular',
+      width: 5000,
+      cols: 16,
+      rows: 8,
+      baseUrl: `static/${panorama}/pano_low.jpg`,
+      tileUrl: (col: string, row: string) => {
+        return `static/${panorama}/pano_${col}_${row}.jpg`;
+      },
+    })
+    .then((textureData: any) => {
+      const handleChangePano = async () => {
+        (document.querySelector('.psv-container canvas')! as HTMLCanvasElement).toBlob(
+          (blob) => {
+            if (!blob) return;
+
+            const url = URL.createObjectURL(blob);
+            const imgElement = document.createElement('img');
+            imgElement.id = 'panorama-image-transition';
+            imgElement.src = url;
+            document.body.appendChild(imgElement);
+
+            imgElement.onload = async () => {
+              await viewer.setPanorama(textureData.panorama, {
+                panoData: textureData.panoData,
+                speed: 0,
+                zoom: 50,
+                showLoader: false,
+                transition: false,
+              });
+
+              if (cb) cb();
+
+              imgElement.style.opacity = '0';
+              imgElement.style.transform = 'scale(1.5)';
+
+              await delay(1300);
+              imgElement.remove();
+            };
+          },
+          'image/jpeg',
+          0.5
+        );
+      };
+
+      if (isGotoMarkerDone) {
+        return handleChangePano();
+      }
+
+      return markersPlugin.addEventListener('goto-marker-done', handleChangePano, { once: true });
+    });
 };
 
 const setPanorama = async (panorama: string) => {
@@ -168,10 +196,31 @@ viewer.addEventListener('click', async ({ data }) => {
   videoElement.parentNode!.classList.remove('container-video');
 });
 
-const animate = () => {
-  if (videoElement.children[0]!.played.length === 0) {
+const listener = new AudioListener();
+viewer.renderer.camera.add(listener);
+
+// create a global audio source
+const sound = new Audio(listener);
+
+// load a sound and set it as the Audio object's buffer
+const audioLoader = new AudioLoader();
+audioLoader.load(
+  'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+  function (buffer) {
+    console.log('hiihjihihi');
+
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setVolume(1);
+    sound.play();
     videoElement.children[0]!.play();
+  },
+  (e) => {
+    console.log(e);
   }
+);
+
+const animate = () => {
   requestAnimationFrame(animate);
   renderer.render(scene, viewer.renderer.camera);
 };
@@ -184,7 +233,7 @@ viewer.addEventListener('size-updated', () => {
   console.log(currentPanoImage);
 
   console.log(`viewer size updated to ${viewer.getSize().width}x${viewer.getSize().height}`);
-  viewer.needsUpdate();
+  // viewer.needsUpdate();
   renderer.setSize(viewer.getSize().width, viewer.getSize().height);
 });
 
@@ -192,18 +241,19 @@ const container = document.querySelector('.psv-container')! as HTMLElement;
 
 container.style.cursor = 'default';
 
-container.addEventListener('pointerdown', (e) => {
+container.addEventListener('pointerdown', (_e) => {
   console.log('pointerdown');
   document.body.style.cursor = 'move';
 });
 
-container.addEventListener('pointerup', (e) => {
+container.addEventListener('pointerup', (_e) => {
   document.body.style.cursor = 'default';
   console.log('pointerup');
 });
 
 const render = async () => {
   await changePano('１Fショップテナント');
+  renderMarkerVr();
 };
 
 render();

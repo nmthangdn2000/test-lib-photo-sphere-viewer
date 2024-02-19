@@ -1,7 +1,6 @@
 import { MarkerConfig, MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import { transitionPanorama, viewer } from './main';
 import { btnArrowHtml } from './constants';
-import { delay } from './util';
 
 const panoSources: {
   panoImage: string;
@@ -14,7 +13,7 @@ const panoSources: {
         id: 'marker1',
         zoomLvl: 90,
         position: { yaw: 0.32, pitch: 0.11 },
-        html: btnArrowHtml("hostpotClick1('基準階')"),
+        html: btnArrowHtml("hostpotClick1('基準階', 'marker1')"),
         style: {
           cursor: 'pointer',
         },
@@ -32,7 +31,7 @@ const panoSources: {
         id: 'marker2',
         zoomLvl: 90,
         position: { yaw: 0.45, pitch: 0.11 },
-        html: btnArrowHtml("hostpotClick2('１Fショップテナント')"),
+        html: btnArrowHtml("hostpotClick2('１Fショップテナント', 'marker2')"),
         style: {
           cursor: 'pointer',
         },
@@ -57,14 +56,12 @@ const panoSources: {
   },
 ];
 
-export const changePano = async (panoImage: string) => {
+export const changePano = async (panoImage: string, markerId?: string) => {
   const markersPlugin = viewer.getPlugin<MarkersPlugin>(MarkersPlugin);
 
-  const currentPanoImage = markersPlugin.getCurrentMarker();
-
-  if (currentPanoImage) {
-    await markersPlugin.gotoMarker(currentPanoImage.id, 700);
-    await delay(300);
+  if (markerId) {
+    markersPlugin.gotoMarker(markerId, 700);
+    // await delay(300);
   }
 
   panoSources.forEach(async (panoSource) => {
@@ -82,7 +79,7 @@ export const changePano = async (panoImage: string) => {
             videoElement.muted = false;
           });
         },
-        !currentPanoImage
+        !markerId
       );
     }
   });
@@ -92,6 +89,6 @@ export const markersPluginOptions = {
   markers: panoSources[0].markers,
 };
 
-(window as any).hostpotClick1 = async (toPanoImage: string) => changePano(toPanoImage);
+(window as any).hostpotClick1 = changePano;
 
-(window as any).hostpotClick2 = async (toPanoImage: string) => changePano(toPanoImage);
+(window as any).hostpotClick2 = changePano;
