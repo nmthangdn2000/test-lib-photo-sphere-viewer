@@ -42,6 +42,18 @@ body {
   display: none !important;
 }
 
+.gyroscope {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.gyroscope:hover {
+  transform: scale(1.5);
+}
+
 .radar {
   position: absolute;
   top: 64%;

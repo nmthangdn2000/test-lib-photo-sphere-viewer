@@ -4,7 +4,7 @@ import '@lottiefiles/lottie-player';
 import { Viewer } from '@photo-sphere-viewer/core';
 import { EquirectangularTilesAdapter } from '@photo-sphere-viewer/equirectangular-tiles-adapter';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
-import { Audio, AudioListener, AudioLoader, Scene, Vector3 } from 'three';
+import { Audio, AudioListener, AudioLoader, PositionalAudio, Scene, Vector3 } from 'three';
 import './style.css';
 
 import '@photo-sphere-viewer/core/index.css';
@@ -13,14 +13,29 @@ import { CSS3DObject, CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer
 import { changePano, markersPluginOptions } from './marker';
 import { renderMarkerVr } from './marker-vr';
 import { delay } from './util';
+import { GyroscopePlugin } from '@photo-sphere-viewer/gyroscope-plugin';
 
 const pathSvgElement = document.getElementById('path-svg')!;
 
 export const viewer = new Viewer({
   container: 'viewer',
   adapter: EquirectangularTilesAdapter,
-  plugins: [[MarkersPlugin, markersPluginOptions]],
+  plugins: [
+    [MarkersPlugin, markersPluginOptions],
+    [
+      GyroscopePlugin,
+      {
+        absolutePosition: false,
+        touchmove: true,
+      },
+    ],
+  ],
   // fisheye: true,
+});
+
+// gyroscope
+document.querySelector('.gyroscope').addEventListener('click', () => {
+  document.querySelector('.psv-button.psv-button--hover-scale.psv-gyroscope-button')!.click();
 });
 
 // const pointRadar = document.getElementById('point-radar')!;
@@ -200,15 +215,13 @@ const listener = new AudioListener();
 viewer.renderer.camera.add(listener);
 
 // create a global audio source
-const sound = new Audio(listener);
+const sound = new PositionalAudio(listener);
 
 // load a sound and set it as the Audio object's buffer
 const audioLoader = new AudioLoader();
 audioLoader.load(
   'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
   function (buffer) {
-    console.log('hiihjihihi');
-
     sound.setBuffer(buffer);
     sound.setLoop(true);
     sound.setVolume(1);
@@ -220,12 +233,14 @@ audioLoader.load(
   }
 );
 
+// videoObject.add(sound);
+
 const animate = () => {
   requestAnimationFrame(animate);
   renderer.render(scene, viewer.renderer.camera);
 };
 
-animate();
+// animate();
 
 viewer.addEventListener('size-updated', () => {
   const markersPlugin = viewer.getPlugin<MarkersPlugin>(MarkersPlugin);

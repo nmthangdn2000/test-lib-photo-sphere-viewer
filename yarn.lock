@@ -152,6 +152,11 @@
   resolved "https://registry.yarnpkg.com/@photo-sphere-viewer/equirectangular-tiles-adapter/-/equirectangular-tiles-adapter-5.7.1.tgz#7e625b3e0a07a436766327fc280f08cdf04b6443"
   integrity sha512-gqASyVXC6W3/3sX4O3SrNNcK+cdtxlG5zP1umZ2K+GyiMeu3zApyJcgaL3bmEV5wow4IlYwinoyrqBWM3gQohA==
 
+"@photo-sphere-viewer/gyroscope-plugin@^5.7.1":
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/@photo-sphere-viewer/gyroscope-plugin/-/gyroscope-plugin-5.7.1.tgz#807c210a36df97075fa82da7b3a92c960e08efd8"
+  integrity sha512-xx/IWBlwzAK3rbFRnO0pUPgYEc/BW7p0v0IygQVobBTb5pukPYSs/yB6cc010hGobf6+R5d+Hf1d4Uixftzbyg==
+
 "@photo-sphere-viewer/markers-plugin@^5.7.1":
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/@photo-sphere-viewer/markers-plugin/-/markers-plugin-5.7.1.tgz#265698ec2f65d23cbd56aa3c5883678b7a7c1f05"
